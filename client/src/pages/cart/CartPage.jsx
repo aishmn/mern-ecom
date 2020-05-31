@@ -1,10 +1,12 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
+
 import {
   increaseItem,
   decreaseItem,
   removeItem,
 } from "../../redux/action/cart.actions";
+import { makePayment } from "../../redux/action/order.actions";
 
 import PropTypes from "prop-types";
 
@@ -13,7 +15,10 @@ const CartPage = ({
   increaseItem,
   decreaseItem,
   removeItem,
+  makePayment,
 }) => {
+  const itemquantity = items.length;
+
   return (
     <div className="container">
       <table className="table table-hover bg-secondary text-light mt-5 ">
@@ -70,11 +75,13 @@ const CartPage = ({
         </tbody>
       </table>
       <div style={{ backgroundColor: "#e0e0e0" }}>
-        <input
-          className=" form-control btn btn-success mb-5 rounded-0"
-          type="submit"
-          value="Checkout"
-        />
+        <button
+          role="link"
+          className="btn btn-warning form-control my-5 "
+          onClick={(e) => makePayment(totalAmmount, itemquantity, items)}
+        >
+          CHECKOUT <i class="fa fa-cc-stripe" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
   );
@@ -83,6 +90,7 @@ CartPage.propTypes = {
   increaseItem: PropTypes.func,
   decreaseItem: PropTypes.func,
   removeItem: PropTypes.func,
+  makePayment: PropTypes.func,
 };
 const mapStateToProps = (state) => ({
   cart: state.cart,
@@ -91,4 +99,5 @@ export default connect(mapStateToProps, {
   increaseItem,
   decreaseItem,
   removeItem,
+  makePayment,
 })(CartPage);
