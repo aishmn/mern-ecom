@@ -1,32 +1,44 @@
-import { loadStripe } from "@stripe/stripe-js";
-import api from "../../utils/api";
-import { PAYMENT_SUCCESS, PAYMENT_SUCCESS_ERROR } from "./types";
-import { setAlert } from "./alert.actions";
-const stripePromise = loadStripe("pk_test_weW7y8bU4MIxwpLC4AWUgoM600BQHZ547K");
+import api from "./../../utils/api";
+import { ORDER_BOOKED, GET_MY_ORDERS } from "./types";
+import { emptyCart } from "./cart.actions";
 
-export const makePayment = (amount, quantity, items) => async (dispatch) => {
+export const bookOrder = (
+  price,
+  products,
+  user,
+  paymentData,
+  history
+) => async (dispatch) => {
   const body = {
-    amount,
-    quantity,
-    products: items,
+    products: products.map((product) => product._id),
+    user,
+    price,
+    delivery_address: {
+      street: paymentData.billing_details.address.line1,
+      city: paymentData.billing_details.address.city,
+      state: paymentData.billing_details.address.city,
+      zipcode: paymentData.billing_details.address.postal_code,
+      country: paymentData.billing_details.address.city,
+    },
   };
+
   try {
-    const session = await api.post("/orders/payment", body);
-    const sessionId = session.data.session.id;
-    const stripe = await stripePromise;
-    const { error, response } = await stripe.redirectToCheckout({
-      sessionId,
-    });
-    console.log(response);
-    if (!error) {
-      console.log("no error");
-    }
+    await api.post("/orders", body);
+    dispatch({ type: ORDER_BOOKED });
+    dispatch(emptyCart());
     localStorage.removeItem("cartItems");
-    dispatch({ type: PAYMENT_SUCCESS, payload: session });
-    dispatch(setAlert("Payement succesfull, your order was placed"));
+    history.push("/dashboard");
   } catch (error) {
-    console.log(error);
-    dispatch({ type: PAYMENT_SUCCESS_ERROR, payload: error.response });
-    dispatch(setAlert("Payement unsuccesfull, use valid crenditials"));
+    console.log(error.response);
+  }
+};
+
+export const getMyOrders = () => async (dispatch) => {
+  try {
+    const orders = await api.get("/orders/my-orders");
+
+    dispatch({ type: GET_MY_ORDERS, payload: orders.data.orders });
+  } catch (err) {
+    console.log(err.response);
   }
 };

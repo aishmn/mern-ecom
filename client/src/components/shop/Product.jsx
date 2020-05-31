@@ -8,12 +8,16 @@ const Product = ({ product, addToCart, cartItems }) => {
     <div className="col-md-4 my-1">
       <div className="card rounded-0">
         <img
-          src="https://placeimg.com/640/480/any"
-          className="card-img-top"
+          src={product.coverImage}
+          className="card-img-top p-2"
           alt="product"
+          style={{ height: "190px", width: "240px" }}
         />
         <div className="card-body">
           <div className="product-description pb-3">{product.name}</div>
+          <p className="text-small text-muted">
+            {product.description.slice(0, 40) + "..."}
+          </p>
           <button
             className="btn btn-outline-success rounded-0 form-control "
             onClick={(e) => addToCart(cartItems, product)}

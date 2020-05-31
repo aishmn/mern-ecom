@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import {
   increaseItem,
   decreaseItem,
   removeItem,
 } from "../../redux/action/cart.actions";
-import { makePayment } from "../../redux/action/order.actions";
-
+import StripeButton from "../../components/stripe/StripeButton";
+import { setAlert } from "../../redux/action/alert.actions";
 import PropTypes from "prop-types";
 
 const CartPage = ({
@@ -15,11 +15,13 @@ const CartPage = ({
   increaseItem,
   decreaseItem,
   removeItem,
-  makePayment,
+  setAlert,
   auth,
 }) => {
-  const itemquantity = items.length;
-
+  if (items.length === 0) {
+    setAlert("Please Add some items to the cart");
+    return <Redirect to="/" />;
+  }
   return (
     <div className="container">
       <table className="table table-hover bg-secondary text-light mt-5 ">
@@ -77,13 +79,13 @@ const CartPage = ({
       </table>
       <div style={{ backgroundColor: "#e0e0e0" }}>
         {auth.isAuthenticated ? (
-          <button
-            role="link"
-            className="btn btn-warning form-control my-5 "
-            onClick={(e) => makePayment(totalAmmount, itemquantity, items)}
-          >
-            CHECKOUT <i class="fa fa-cc-stripe" aria-hidden="true"></i>
-          </button>
+          <div className="mb-5 text-right">
+            <StripeButton
+              price={totalAmmount}
+              user={auth.user._id}
+              products={items}
+            />
+          </div>
         ) : (
           <Link
             role="link"
@@ -94,6 +96,24 @@ const CartPage = ({
           </Link>
         )}
       </div>
+      <div className="card p-3">
+        <p className="lead ">
+          You can use following fake visa card for the payment test purpose
+          details are :
+        </p>
+        <br />
+        <span>
+          card-no: <strong className="text-primary">4242-4242-4242-4242</strong>
+        </span>
+        <br />
+        <span>
+          exp-date: <strong className="text-primary">12/22</strong>
+        </span>
+        <br />
+        <span>
+          cvv-number: <strong className="text-primary">255</strong>
+        </span>
+      </div>
     </div>
   );
 };
@@ -101,7 +121,7 @@ CartPage.propTypes = {
   increaseItem: PropTypes.func,
   decreaseItem: PropTypes.func,
   removeItem: PropTypes.func,
-  makePayment: PropTypes.func,
+  setAlert: PropTypes.func,
   auth: PropTypes.object,
 };
 const mapStateToProps = (state) => ({
@@ -112,5 +132,5 @@ export default connect(mapStateToProps, {
   increaseItem,
   decreaseItem,
   removeItem,
-  makePayment,
+  setAlert,
 })(CartPage);

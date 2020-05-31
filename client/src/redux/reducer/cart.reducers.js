@@ -3,6 +3,7 @@ import {
   INCREASE_ITEM,
   DECREASE_ITEM,
   REMOVE_ITEM,
+  EMPTY_CART,
 } from "../action/types";
 const cartItems = JSON.parse(localStorage.getItem("cartItems"));
 const initialState = {
@@ -26,6 +27,8 @@ export default function (state = initialState, action) {
           0
         ),
       };
+    case EMPTY_CART:
+      return { ...state, items: [], totalAmmount: 0 };
     default:
       return state;
   }

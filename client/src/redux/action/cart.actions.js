@@ -3,6 +3,7 @@ import {
   INCREASE_ITEM,
   DECREASE_ITEM,
   REMOVE_ITEM,
+  EMPTY_CART,
 } from "./types";
 
 export const addToCart = (items, product) => (dispatch) => {
@@ -48,4 +49,9 @@ export const removeItem = (items, id) => (dispatch) => {
 
   dispatch({ type: REMOVE_ITEM, payload: { cartItems } });
   localStorage.setItem("cartItems", JSON.stringify(cartItems));
+};
+
+export const emptyCart = () => (dispatch) => {
+  localStorage.removeItem("cartItems");
+  dispatch({ type: EMPTY_CART });
 };

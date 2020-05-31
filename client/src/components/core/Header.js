@@ -8,14 +8,15 @@ import Cart from "../cart/Cart";
 const Header = ({ auth: { isAuthenticated, user }, logout }) => {
   const authLinks = (
     <ul className="navbar-nav">
+      <li className="nav-item">
+        <Link className="mr-2 text-primary nav-link " to="/dashboard">
+          Hello {user ? user.name : ""}
+        </Link>
+      </li>
       <li className="nav-item ">
-        <a onClick={logout} href="#!" className="nav-link">
-          <span className="mr-2 text-primary">
-            Hello {user ? user.name : ""}
-          </span>
+        <a className="nav-link" href="/#" onClick={logout}>
           <i className="fa fa-sign-out" />
-
-          <span className="hide-sm">Logout</span>
+          Logout
         </a>
       </li>
     </ul>
