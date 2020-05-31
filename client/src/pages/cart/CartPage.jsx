@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-
+import { Link } from "react-router-dom";
 import {
   increaseItem,
   decreaseItem,
@@ -16,6 +16,7 @@ const CartPage = ({
   decreaseItem,
   removeItem,
   makePayment,
+  auth,
 }) => {
   const itemquantity = items.length;
 
@@ -75,13 +76,23 @@ const CartPage = ({
         </tbody>
       </table>
       <div style={{ backgroundColor: "#e0e0e0" }}>
-        <button
-          role="link"
-          className="btn btn-warning form-control my-5 "
-          onClick={(e) => makePayment(totalAmmount, itemquantity, items)}
-        >
-          CHECKOUT <i class="fa fa-cc-stripe" aria-hidden="true"></i>
-        </button>
+        {auth.isAuthenticated ? (
+          <button
+            role="link"
+            className="btn btn-warning form-control my-5 "
+            onClick={(e) => makePayment(totalAmmount, itemquantity, items)}
+          >
+            CHECKOUT <i class="fa fa-cc-stripe" aria-hidden="true"></i>
+          </button>
+        ) : (
+          <Link
+            role="link"
+            className="btn btn-warning form-control my-5 "
+            to="/login"
+          >
+            LOGIN TO PROCEED PAYMENT
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -91,9 +102,11 @@ CartPage.propTypes = {
   decreaseItem: PropTypes.func,
   removeItem: PropTypes.func,
   makePayment: PropTypes.func,
+  auth: PropTypes.object,
 };
 const mapStateToProps = (state) => ({
   cart: state.cart,
+  auth: state.auth,
 });
 export default connect(mapStateToProps, {
   increaseItem,
