@@ -1,6 +1,6 @@
 live at:
 
-# https://mkmern-boilerplate.herokuapp.com/
+# https://react-node-ecom.herokuapp.com
 
 ## Available Scripts
 
